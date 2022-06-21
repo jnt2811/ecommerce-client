@@ -3,17 +3,27 @@ import { Switch } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { paths } from "../constants";
 import { Header } from "../layouts";
-import { KqTimKiem, NoMatch, TrangChu } from "../pages";
+import { DangNhap, KqTimKiem, NoMatch, TrangChu } from "../pages";
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
-      <Header />
-
       <Switch>
-        <Route exact path={paths.home} component={TrangChu} />
-        <Route exact path={paths.search} component={KqTimKiem} />
-        <Route component={NoMatch} />
+        <Route exact path={paths.login} component={DangNhap} />
+
+        <Route
+          render={() => (
+            <>
+              <Header />
+
+              <Switch>
+                <Route exact path={paths.home} component={TrangChu} />
+                <Route exact path={paths.search} component={KqTimKiem} />
+                <Route component={NoMatch} />
+              </Switch>
+            </>
+          )}
+        />
       </Switch>
     </BrowserRouter>
   );
