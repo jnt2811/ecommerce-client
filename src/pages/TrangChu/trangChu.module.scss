@@ -1,0 +1,12 @@
+@import "../../assets/styles/mixins.scss";
+
+.container {
+  padding-inline: calc((100vw - #{$ctn-width}) / 2);
+  display: flex;
+  gap: 20px;
+
+  .main {
+    padding-block: 30px;
+    flex: auto;
+  }
+}

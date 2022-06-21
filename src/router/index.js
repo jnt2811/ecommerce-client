@@ -3,7 +3,7 @@ import { Switch } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import { paths } from "../constants";
 import { Header } from "../layouts";
-import { NoMatch, TrangChu } from "../pages";
+import { KqTimKiem, NoMatch, TrangChu } from "../pages";
 
 export const AppRouter = () => {
   return (
@@ -12,6 +12,7 @@ export const AppRouter = () => {
 
       <Switch>
         <Route exact path={paths.home} component={TrangChu} />
+        <Route exact path={paths.search} component={KqTimKiem} />
         <Route component={NoMatch} />
       </Switch>
     </BrowserRouter>

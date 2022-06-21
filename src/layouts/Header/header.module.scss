@@ -1,4 +1,6 @@
 .container {
+  padding-inline: calc((100vw - 1200px) / 2);
+
   .logo {
     color: white;
     font-size: 30px;

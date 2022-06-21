@@ -11,7 +11,7 @@ export const Header = () => {
         <Row align="middle" justify="space-between">
           <Col className={style["logo"]}>LOGO</Col>
 
-          <Col span={10}>
+          <Col span={14}>
             <SearchProduct />
           </Col>
 

@@ -8,9 +8,9 @@ export const UserAccount = () => {
       placement="bottomRight"
       overlay={
         <Menu>
-          <Menu.Item>Đơn hàng của tôi</Menu.Item>
-          <Menu.Item>Tài khoản của tôi</Menu.Item>
-          <Menu.Item>Thoát tài khoản</Menu.Item>
+          <Menu.Item key="1">Đơn hàng của tôi</Menu.Item>
+          <Menu.Item key="2">Tài khoản của tôi</Menu.Item>
+          <Menu.Item key="3">Thoát tài khoản</Menu.Item>
         </Menu>
       }
     >
