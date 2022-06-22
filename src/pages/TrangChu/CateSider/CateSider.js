@@ -1,22 +1,32 @@
 import { Layout, Menu } from "antd";
+import { useHistory } from "react-router-dom";
+import { paths } from "../../../constants";
 import style from "./cateSider.module.scss";
-import { useQuery } from "@apollo/client";
-import { getCategories } from "../../../constants/gql";
+// import { useQuery } from "@apollo/client";
+// import { getCategories } from "../../../constants/gql";
+
+const menuItems = Array(10)
+  .fill(null)
+  .map((_, index) => ({
+    key: `dm-${index + 1}`,
+    label: `Danh muc ${index + 1}`,
+  }));
 
 export const CateSider = () => {
-  const { loading, error, data } = useQuery(getCategories);
+  // const { loading, error, data } = useQuery(getCategories);
+  const history = useHistory();
 
-  console.log(data);
+  const handleClickCate = ({ key }) =>
+    history.push({
+      pathname: paths.search,
+      search: `category=${key}`,
+    });
 
   return (
     <Layout.Sider className={style["container"]} width={250}>
       <h1>Danh mục</h1>
 
-      <Menu>
-        <Menu.Item key="1">Cate 1</Menu.Item>
-        <Menu.Item key="2">Cate 2</Menu.Item>
-        <Menu.Item key="3">Cate 3</Menu.Item>
-      </Menu>
+      <Menu items={menuItems} onClick={handleClickCate} />
     </Layout.Sider>
   );
 };

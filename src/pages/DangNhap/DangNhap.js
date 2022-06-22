@@ -16,51 +16,53 @@ export const DangNhap = () => {
 
   return (
     <Layout style={{ height: "100vh", overflow: "auto" }}>
-      {/* <Form
-        initialValues={{ remember: true }}
-        style={{ width: 400, margin: "auto" }}
-        onFinish={handleSubmit}
-      >
-        <h1 style={{ textAlign: "center", fontSize: 40 }}>Đăng nhập</h1>
-
-        <Form.Item
-          name="username"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Username!",
-            },
-          ]}
+      {false && (
+        <Form
+          initialValues={{ remember: true }}
+          style={{ width: 400, margin: "auto" }}
+          onFinish={handleSubmit}
         >
-          <Input
-            size="large"
-            prefix={<UserOutlined />}
-            placeholder="Tên đăng nhập"
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "Please input your Password!",
-            },
-          ]}
-        >
-          <Input
-            size="large"
-            prefix={<LockOutlined />}
-            type="password"
-            placeholder="Mật khẩu"
-          />
-        </Form.Item>
+          <h1 style={{ textAlign: "center", fontSize: 40 }}>Đăng nhập</h1>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" block size="large">
-            Đăng nhập
-          </Button>
-        </Form.Item>
-      </Form> */}
+          <Form.Item
+            name="username"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Username!",
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              prefix={<UserOutlined />}
+              placeholder="Tên đăng nhập"
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "Please input your Password!",
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              prefix={<LockOutlined />}
+              type="password"
+              placeholder="Mật khẩu"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block size="large">
+              Đăng nhập
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
 
       <Button onClick={loginWithPopup}>Login with popup</Button>
       <Button onClick={loginWithRedirect}>Login with redirect</Button>

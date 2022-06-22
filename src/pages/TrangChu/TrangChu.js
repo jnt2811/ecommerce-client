@@ -2,7 +2,7 @@ import style from "./trangChu.module.scss";
 import { CateSider } from "./CateSider/CateSider";
 import { Col, Row } from "antd";
 import { ProductSort } from "./ProductSort/ProductSort";
-import { Product } from "./Product/Product";
+import { ProductTile } from "../../components";
 
 export const TrangChu = () => {
   return (
@@ -23,22 +23,22 @@ export const TrangChu = () => {
 
         <Row gutter={[20, 20]}>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
           <Col span={6}>
-            <Product />
+            <ProductTile />
           </Col>
         </Row>
       </div>

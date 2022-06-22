@@ -1,8 +1,16 @@
 import { ShoppingOutlined } from "@ant-design/icons";
 import { Button, Card, Rate, Row, Space, Tooltip } from "antd";
+import { useHistory } from "react-router-dom";
+import { paths } from "../../constants";
 import style from "./product.module.scss";
 
-export const Product = () => {
+export const ProductTile = () => {
+  const history = useHistory();
+
+  const handleClick = () => {
+    history.push(paths.product + "/l1Ad0osn");
+  };
+
   return (
     <Card
       className={style["product"]}
@@ -13,15 +21,11 @@ export const Product = () => {
         />
       }
       actions={[
-        <Row align="middle" justify="space-between">
+        <Row justify="start">
           <div className={style["price"]}>100.000 đ</div>
-          <Button
-            icon={<ShoppingOutlined />}
-            type="primary"
-            shape="circle"
-          ></Button>
         </Row>,
       ]}
+      onClick={handleClick}
     >
       <Card.Meta
         title={

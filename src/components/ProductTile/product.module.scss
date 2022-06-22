@@ -2,7 +2,7 @@
   border: none;
 
   :global(.ant-card-body) {
-    padding: 10px 0px !important;
+    padding: 10px !important;
     padding-bottom: 5px !important;
   }
 
@@ -64,6 +64,7 @@
   }
 
   :global(.ant-card-actions) {
+    padding-inline: 10px;
     border: none;
     li {
       margin-block: 0px 5px;

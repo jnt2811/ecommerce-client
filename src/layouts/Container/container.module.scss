@@ -1,0 +1,6 @@
+@import "../../assets/styles/mixins.scss";
+
+.container {
+  padding: 25px calc((100vw - #{$ctn-width}) / 2);
+  min-height: calc(100vh - 64px);
+}
