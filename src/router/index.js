@@ -5,6 +5,7 @@ import { paths } from "../constants";
 import { Container, Header } from "../layouts";
 import {
   ChiTietDonHang,
+  DangKy,
   DangNhap,
   KqTimKiem,
   NoMatch,
@@ -12,12 +13,14 @@ import {
   QuanLyDonHang,
   TrangChu,
 } from "../pages";
+import { AuthRoute, PrivateRoute } from "./ConfigRoutes";
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path={paths.login} component={DangNhap} />
+        <AuthRoute exact path={paths.login} component={DangNhap} />
+        <AuthRoute exact path={paths.signup} component={DangKy} />
 
         <Route
           render={() => (
@@ -28,15 +31,9 @@ export const AppRouter = () => {
                 <Switch>
                   <Route exact path={paths.home} component={TrangChu} />
                   <Route exact path={paths.search} component={KqTimKiem} />
-                  <Route
-                    path={paths.product + "/:id"}
-                    component={ProductDetail}
-                  />
-                  <Route exact path={paths.order} component={QuanLyDonHang} />
-                  <Route
-                    path={paths.order + "/:id"}
-                    component={ChiTietDonHang}
-                  />
+                  <Route path={paths.product + "/:id"} component={ProductDetail} />
+                  <PrivateRoute exact path={paths.order} component={QuanLyDonHang} />
+                  <PrivateRoute path={paths.order + "/:id"} component={ChiTietDonHang} />
                   <Route component={NoMatch} />
                 </Switch>
               </Container>

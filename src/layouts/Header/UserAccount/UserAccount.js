@@ -3,13 +3,15 @@ import { Button, Dropdown, Menu } from "antd";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { paths } from "../../../constants";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const LOGOUT = "logout";
 
 export const UserAccount = () => {
   const history = useHistory();
+  const { currentUser, setCurrentUser } = useAuth();
 
-  const menuItems = [
+  const loggedInItems = [
     {
       key: paths.order,
       label: "Đơn hàng của tôi",
@@ -24,13 +26,31 @@ export const UserAccount = () => {
     },
   ];
 
+  const notLoggedInItems = [
+    {
+      key: paths.login,
+      label: "Đăng nhập",
+    },
+    {
+      key: paths.signup,
+      label: "Đăng ký",
+    },
+  ];
+
   const handleMenu = ({ key }) => {
-    if (key === LOGOUT) return;
+    if (key === LOGOUT) {
+      localStorage.clear();
+      setCurrentUser();
+      return;
+    }
     history.push(key);
   };
 
   return (
-    <Dropdown placement="bottomRight" overlay={<Menu items={menuItems} onClick={handleMenu} />}>
+    <Dropdown
+      placement="bottomRight"
+      overlay={<Menu items={currentUser ? loggedInItems : notLoggedInItems} onClick={handleMenu} />}
+    >
       <Button icon={<UserOutlined />} type="primary" size="large"></Button>
     </Dropdown>
   );

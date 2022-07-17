@@ -68,7 +68,7 @@ export const ProductDetail = () => {
 
           <Col span={5}>
             <Space>
-              <Avatar size={40}>Tiki</Avatar>
+              <Avatar size={40}>{product?.SELLER?.SELLER_NAME}</Avatar>
               <div>{product?.SELLER?.SELLER_NAME}</div>
             </Space>
 

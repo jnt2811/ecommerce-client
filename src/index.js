@@ -4,11 +4,14 @@ import reportWebVitals from "./reportWebVitals";
 import { AppConfig } from "./configs";
 import { AppRouter } from "./router";
 import "./assets/styles/main.scss";
+import { AuthProvider } from "./contexts/AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AppConfig>
-    <AppRouter />
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   </AppConfig>
 );
 
