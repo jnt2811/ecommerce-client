@@ -1,8 +1,10 @@
 .container {
   padding-inline: calc((100vw - 1200px) / 2);
+  background-color: #fff;
 
   .logo {
-    color: white;
+    color: #4a5fc1;
     font-size: 30px;
+    font-weight: bold;
   }
 }

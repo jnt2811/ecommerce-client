@@ -1,4 +1,4 @@
-import { Col, Row, Tabs } from "antd";
+import { Tabs } from "antd";
 import React from "react";
 import OrderTile from "./OrderTile/OrderTile";
 

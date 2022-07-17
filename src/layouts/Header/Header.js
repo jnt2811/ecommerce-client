@@ -1,4 +1,6 @@
 import { Affix, Col, Layout, Row, Space } from "antd";
+import { Link } from "react-router-dom";
+import { paths } from "../../constants";
 import style from "./header.module.scss";
 import { SearchProduct } from "./SearchProduct/SearchProduct";
 import { ShoppingCart } from "./ShoppingCart/ShoppingCart";
@@ -9,7 +11,11 @@ export const Header = () => {
     <Affix>
       <Layout.Header className={style["container"]}>
         <Row align="middle" justify="space-between">
-          <Col className={style["logo"]}>LOGO</Col>
+          <Col>
+            <Link to={paths.home} className={style["logo"]}>
+              CLIENT
+            </Link>
+          </Col>
 
           <Col span={14}>
             <SearchProduct />
