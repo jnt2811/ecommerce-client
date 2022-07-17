@@ -11,6 +11,7 @@ import {
   ProductDetail,
   QuanLyDonHang,
   TrangChu,
+  paypal
 } from "../pages";
 
 export const AppRouter = () => {
@@ -37,6 +38,7 @@ export const AppRouter = () => {
                     path={paths.order + "/:id"}
                     component={ChiTietDonHang}
                   />
+                    <Route exact path={paths.payment} component={paypal} />
                   <Route component={NoMatch} />
                 </Switch>
               </Container>
