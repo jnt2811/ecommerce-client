@@ -13,6 +13,7 @@ import {
   QuanLyDonHang,
   TrangChu,
   paypal,
+  Checkout,
 } from "../pages";
 import { AuthRoute, PrivateRoute } from "./ConfigRoutes";
 
@@ -35,6 +36,7 @@ export const AppRouter = () => {
                   <Route path={paths.product + "/:id"} component={ProductDetail} />
                   <PrivateRoute exact path={paths.order} component={QuanLyDonHang} />
                   <PrivateRoute path={paths.order + "/:id"} component={ChiTietDonHang} />
+                  <PrivateRoute path={paths.checkout} component={Checkout} />
                   <Route exact path={paths.payment} component={paypal} />
                   <Route component={NoMatch} />
                 </Switch>

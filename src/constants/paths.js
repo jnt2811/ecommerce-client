@@ -7,4 +7,5 @@ export const paths = {
   order: "/order",
   account: "/account",
   payment: "/payment",
+  checkout: "/checkout",
 };

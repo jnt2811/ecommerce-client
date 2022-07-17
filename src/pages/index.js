@@ -7,3 +7,4 @@ export * from "./QuanLyDonHang/QuanLyDonHang";
 export * from "./ChiTietDonHang/ChiTietDonHang";
 export * from "./DangKy/DangKy";
 export * from "./paypal/paypal";
+export * from "./Checkout/Checkout";

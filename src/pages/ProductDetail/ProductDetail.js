@@ -4,13 +4,18 @@ import ImageGallery from "react-image-gallery";
 import style from "./productDetail.module.scss";
 import moment from "moment";
 import { useQuery } from "@apollo/client";
-import { GET_PRODUCTS } from "../../queries";
+import { ADD_TO_CART, GET_PRODUCTS } from "../../queries";
 import { useParams } from "react-router-dom";
 import { keys } from "../../constants";
 import { formatNumberToPrice } from "../../helpers";
+import { useAuth } from "../../contexts/AuthContext";
+import { useMutation } from "@apollo/client";
 
 export const ProductDetail = () => {
   const { id } = useParams();
+  const { currentUser } = useAuth();
+  const [addToCart, { data: add_data, loading: add_loading, error: add_error }] =
+    useMutation(ADD_TO_CART);
 
   const {
     loading: product_loading,
@@ -22,6 +27,7 @@ export const ProductDetail = () => {
   });
 
   console.log(`get product ID ${id}:`, product_loading, product_error, product_data);
+  console.log(`add to cart`, add_data, add_loading, add_error);
 
   const product = product_data?.getProducts?.length > 0 ? product_data?.getProducts[0] : {};
 
@@ -61,7 +67,24 @@ export const ProductDetail = () => {
               {formatNumberToPrice(product?.PRICE)} ₫
             </div>
 
-            <Button type="primary" size="large" style={{ width: 200 }}>
+            <Button
+              type="primary"
+              size="large"
+              style={{ width: 200 }}
+              onClick={() =>
+                addToCart({
+                  variables: {
+                    productId: [
+                      {
+                        COUNT_PRODUCT: 1,
+                        PRODUCT_ID: id,
+                      },
+                    ],
+                    userId: currentUser?.ID,
+                  },
+                })
+              }
+            >
               Chọn mua
             </Button>
           </Col>
