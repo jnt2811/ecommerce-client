@@ -1,9 +1,10 @@
 import { Col, Row } from "antd";
 import React from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import {keys} from '../../constants'
 
 const initialOptions = {
-    "client-id": "AcYsWy99ZCtgwVYvL9I6_hYbj7Wa6U8haf-cSC0F-DbtWfIPKFaLRFiUaqeH1QjojZwgC0DvmSiQimxS",
+    "client-id": keys.PAYPAL_SANDBOX_CLIENT_ID,
     currency: "USD",
     intent: "capture",
     // "data-client-token": "abc123xyz==",
