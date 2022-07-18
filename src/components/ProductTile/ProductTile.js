@@ -1,42 +1,38 @@
-import { ShoppingOutlined } from "@ant-design/icons";
-import { Button, Card, Rate, Row, Space, Tooltip } from "antd";
+import { Card, Rate, Row, Space, Tooltip } from "antd";
 import { useHistory } from "react-router-dom";
-import { paths } from "../../constants";
+import { keys, paths } from "../../constants";
+import { formatNumberToPrice } from "../../helpers";
 import style from "./product.module.scss";
 
-export const ProductTile = () => {
+export const ProductTile = ({ product = {} }) => {
   const history = useHistory();
 
   const handleClick = () => {
-    history.push(paths.product + "/l1Ad0osn");
+    history.push(paths.product + "/" + product.ID);
   };
+
+  const coverImage =
+    !!product?.GALLERY && JSON.parse(product?.GALLERY).length > 0
+      ? keys.SERVER_URI + JSON.parse(product?.GALLERY)[0]
+      : null;
 
   return (
     <Card
       className={style["product"]}
-      cover={
-        <img
-          alt="example"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-        />
-      }
+      cover={<img alt="example" src={coverImage} />}
       actions={[
         <Row justify="start">
-          <div className={style["price"]}>100.000 đ</div>
+          <div className={style["price"]}>{formatNumberToPrice(product?.PRICE)} đ</div>
         </Row>,
       ]}
       onClick={handleClick}
     >
       <Card.Meta
-        title={
-          <Tooltip title="Lorem ipsum dolor sit amet">
-            Lorem ipsum dolor sit amet
-          </Tooltip>
-        }
+        title={<Tooltip title={product?.PRODUCT_NAME}>{product?.PRODUCT_NAME}</Tooltip>}
         description={
-          <Space>
-            <Rate value={5} allowHalf disabled />
-            <small>(100)</small>
+          <Space size={0}>
+            <Rate value={0} allowHalf disabled />
+            <small>(0)</small>
           </Space>
         }
       />

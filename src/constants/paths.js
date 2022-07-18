@@ -2,7 +2,10 @@ export const paths = {
   home: "/",
   search: "/search",
   login: "/login",
+  signup: "/signup",
   product: "/product",
   order: "/order",
-  payment: "/payment"
+  account: "/account",
+  payment: "/payment",
+  checkout: "/checkout",
 };

@@ -1,17 +1,8 @@
-import {
-  ApolloProvider,
-  ApolloClient,
-  InMemoryCache,
-  HttpLink,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import { keys } from "../constants";
 
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: "https://1ac8-123-16-246-155.ap.ngrok.io",
-    fetchOptions: {
-      mode: "no-cors",
-    },
-  }),
+export const client = new ApolloClient({
+  uri: `${keys.SERVER_URI}/resource`,
   cache: new InMemoryCache(),
 });
 

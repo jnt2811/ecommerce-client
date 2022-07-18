@@ -1,76 +1,87 @@
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { useAuth0 } from "@auth0/auth0-react";
-import { Form, Input, Layout, Button } from "antd";
-import { useHistory } from "react-router-dom";
-import { paths } from "../../constants";
+import { useMutation } from "@apollo/client";
+import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { keys, paths } from "../../constants";
+import { useAuth } from "../../contexts/AuthContext";
+import { encrypt256 } from "../../helpers";
+import { USER_LOGIN } from "../../queries";
 
 export const DangNhap = () => {
-  const history = useHistory();
-  const { loginWithPopup, loginWithRedirect, logout, user, isAuthenticated } =
-    useAuth0();
+  const [form] = Form.useForm();
+  const { setCurrentUser } = useAuth();
+  const [login, { data: login_data, loading: login_loading, error: login_error }] =
+    useMutation(USER_LOGIN);
 
-  const handleSubmit = (values) => {
-    console.log("Login submit", values);
-    history.push(paths.home);
+  console.log("login user", login_data, login_loading, login_error);
+
+  useEffect(() => {
+    if (login_data) {
+      if (login_data?.userLogin?.status === "OK") {
+        form.resetFields();
+
+        const token = login_data?.userLogin?.token;
+        const user_info = login_data?.userLogin?.user;
+
+        setCurrentUser(user_info);
+
+        localStorage.setItem(keys.ACCESS_TOKEN, token);
+        localStorage.setItem(keys.USER_INFO, JSON.stringify(user_info));
+
+        notification.success({ message: "Welcome back!" });
+      } else {
+        console.log("LOGIN FAILED!");
+        notification.error({ message: login_data?.userLogin?.message });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [login_data]);
+
+  const onFinish = (values) => {
+    console.log(values);
+
+    values.password = encrypt256(values.password);
+
+    login({ variables: values });
   };
 
   return (
-    <Layout style={{ height: "100vh", overflow: "auto" }}>
-      {false && (
-        <Form
-          initialValues={{ remember: true }}
-          style={{ width: 400, margin: "auto" }}
-          onFinish={handleSubmit}
-        >
-          <h1 style={{ textAlign: "center", fontSize: 40 }}>Đăng nhập</h1>
+    <Row>
+      <Col span={12}></Col>
 
-          <Form.Item
-            name="username"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Username!",
-              },
-            ]}
-          >
-            <Input
-              size="large"
-              prefix={<UserOutlined />}
-              placeholder="Tên đăng nhập"
-            />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Password!",
-              },
-            ]}
-          >
-            <Input
-              size="large"
-              prefix={<LockOutlined />}
-              type="password"
-              placeholder="Mật khẩu"
-            />
+      <Col span={12} style={styles.main}>
+        <Typography.Title>Login now</Typography.Title>
+
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item label="Email or Phone number" name="username" rules={[{ required: true }]}>
+            <Input />
           </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block size="large">
-              Đăng nhập
-            </Button>
+          <Form.Item label="Password" name="password" rules={[{ required: true }]}>
+            <Input.Password />
           </Form.Item>
+
+          <Button block type="primary" htmlType="submit" loading={login_loading}>
+            Submit
+          </Button>
         </Form>
-      )}
 
-      <Button onClick={loginWithPopup}>Login with popup</Button>
-      <Button onClick={loginWithRedirect}>Login with redirect</Button>
-      <Button onClick={logout}>Logout</Button>
-
-      <h3>User is {isAuthenticated ? "logged in" : "not logged in"}</h3>
-
-      {isAuthenticated && <p>{JSON.stringify(user, null, 2)}</p>}
-    </Layout>
+        <br />
+        <div>
+          Have not had account yet? <Link to={paths.signup}>Signup now!</Link>
+        </div>
+      </Col>
+    </Row>
   );
+};
+
+const styles = {
+  main: {
+    height: "100vh",
+    oveflow: "auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    paddingRight: "calc((100vw - 1000px)/2)",
+  },
 };

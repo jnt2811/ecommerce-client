@@ -1,6 +1,8 @@
 import { ShoppingOutlined } from "@ant-design/icons";
 import { Button, Col, Drawer, Row } from "antd";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { paths } from "../../../constants";
 
 export const ShoppingCart = () => {
   const [visible, setVisible] = useState(false);
@@ -15,12 +17,7 @@ export const ShoppingCart = () => {
 
   return (
     <>
-      <Button
-        type="primary"
-        icon={<ShoppingOutlined />}
-        size="large"
-        onClick={handleOpen}
-      ></Button>
+      <Button type="primary" icon={<ShoppingOutlined />} size="large" onClick={handleOpen}></Button>
 
       <Drawer
         title="Giỏ hàng"
@@ -32,9 +29,11 @@ export const ShoppingCart = () => {
               <Col>Tổng thanh toán (0)</Col>
               <Col>0 VND</Col>
             </Row>
-            <Button type="primary" block size="large">
-              Thanh toán
-            </Button>
+            <Link to={paths.checkout} onClick={() => setVisible(false)}>
+              <Button type="primary" block size="large">
+                Thanh toán
+              </Button>
+            </Link>
           </>
         }
       ></Drawer>
