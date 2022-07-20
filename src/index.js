@@ -4,15 +4,18 @@ import reportWebVitals from "./reportWebVitals";
 import { AppConfig } from "./configs";
 import { AppRouter } from "./router";
 import "./assets/styles/main.scss";
-import { AuthProvider } from "./contexts/AuthContext";
+
+import { Provider } from "react-redux";
+import store from "./ducks/configStore";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
-  <AppConfig>
-    <AuthProvider>
+  <Provider store={store}>
+    <AppConfig>
       <AppRouter />
-    </AuthProvider>
-  </AppConfig>
+    </AppConfig>
+  </Provider>
 );
 
 reportWebVitals();

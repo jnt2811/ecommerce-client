@@ -1,36 +1,37 @@
-import { useMutation, useQuery } from "@apollo/client";
-import { Button, Col, Form, Input, notification, Row, Select, Typography } from "antd";
+import { useMutation } from "@apollo/client";
+import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { keys, paths } from "../../constants";
-import { useAuth } from "../../contexts/AuthContext";
+import { updateUser } from "../../ducks/slices/authSlice";
 import { encrypt256 } from "../../helpers";
 import { USER_SIGNUP } from "../../queries";
 
 export const DangKy = () => {
   const [form] = Form.useForm();
-  const [addSeller, { data: add_data, loading: add_loading, error: add_error }] =
+  const [addUser, { data: add_data, loading: add_loading, error: add_error }] =
     useMutation(USER_SIGNUP);
   const [tempUserData, setTempUserData] = useState();
-  const { setCurrentUser } = useAuth();
+  const dispatch = useDispatch();
 
   console.log("user signup", add_data, add_loading, add_error);
 
   useEffect(() => {
     if (add_data) {
-      if (add_data?.addNewSeller?.status === "OK") {
+      if (add_data?.addNewUser?.status === "OK") {
         form.resetFields();
-        setCurrentUser(tempUserData);
+        dispatch(updateUser(tempUserData));
 
-        const token = add_data?.addNewSeller?.token;
+        const token = add_data?.addNewUser?.token;
 
         localStorage.setItem(keys.ACCESS_TOKEN, token);
         localStorage.setItem(keys.USER_INFO, JSON.stringify(tempUserData));
 
-        notification.success({ message: "Signup successfully!" });
-      } else if (add_data?.addNewSeller?.status === "KO") {
+        notification.success({ message: "Signup successfully!", placement: "bottomLeft" });
+      } else if (add_data?.addNewUser?.status === "KO") {
         console.log("SIGNUP FAILED!");
-        notification.error({ message: add_data?.addNewSeller?.message });
+        notification.error({ message: add_data?.addNewUser?.message });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +46,7 @@ export const DangKy = () => {
 
     setTempUserData(values);
 
-    addSeller({ variables: { sellers: [values] } });
+    addUser({ variables: { users: [values] } });
   };
 
   return (
@@ -56,9 +57,19 @@ export const DangKy = () => {
         <Typography.Title>Đăng ký ngay</Typography.Title>
 
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item label="Họ và tên" name="SELLER_NAME" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
+          <Row gutter={10}>
+            <Col span={12}>
+              <Form.Item label="Họ" name="LAST_NAME" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item label="Tên đệm và tên" name="FIRST_NAME" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Email" name="EMAIL" rules={[{ required: true }]}>
             <Input />

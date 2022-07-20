@@ -1,61 +1,53 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { AutoComplete, Button, Input, Row } from "antd";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { paths } from "../../../constants";
+import { Button, Input, Row } from "antd";
+import { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { keys, paths } from "../../../constants";
+import { useQueryParams } from "../../../hooks";
 
 export const SearchProduct = () => {
-  const [searchString, setSearchString] = useState();
-  const [searchOptions, setSearchOptions] = useState([]);
+  const { search, pathname } = useLocation();
+  const [searchValue, setSearchValue] = useState();
   const history = useHistory();
+  const query = useQueryParams();
+  const name = query.get(keys.SEARCH_NAME);
 
-  const options = [
-    {
-      label: !!searchString ? "Kết quả tìm kiếm" : "Tìm kiếm gần đây",
-      options: searchOptions,
-    },
-  ];
+  useEffect(() => {
+    if (pathname === paths.home) setSearchValue();
+  }, [pathname]);
 
-  const handleSelect = (value) => {
-    console.log("[info] select result returned:", value);
-    doSearch(value);
-  };
+  const handleChange = (e) => setSearchValue(e.target.value);
 
   const handleSearch = (value) => {
-    console.log("[info] live search product:", value);
-  };
+    if (!!value) {
+      let searchValue = `${keys.SEARCH_NAME}=${value}`;
 
-  const handleChangeSearchString = (e) => {
-    const { value } = e.target;
-    setSearchString(value);
-    if (!!value) setSearchOptions([{ value }]);
-    else setSearchOptions([]);
-  };
+      if (!!search) {
+        const tempSearch = search.replace("?", "");
+        if (!!name) {
+          searchValue = tempSearch.replace(name, value);
+        } else searchValue += `&&` + tempSearch;
+      }
 
-  const doSearch = (value) => {
-    !!value &&
       history.push({
         pathname: paths.search,
-        search: `name=${value}`,
+        search: searchValue,
       });
+    }
   };
+
+  console.log("log header", search, !!search, !!search.includes(`${keys.SEARCH_NAME}=`));
 
   return (
     <Row wrap={false}>
-      <AutoComplete
-        style={{ width: "100%" }}
-        options={options}
-        onSelect={handleSelect}
-        onSearch={handleSearch}
-      >
-        <Input
-          value={searchString}
-          onChange={handleChangeSearchString}
-          size="large"
-          placeholder="Tìm kiếm sản phẩm ..."
-          style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-        />
-      </AutoComplete>
+      <Input
+        size="large"
+        placeholder="Tìm kiếm sản phẩm ..."
+        style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        onPressEnter={(e) => handleSearch(e.target.value)}
+        value={searchValue}
+        onChange={handleChange}
+      />
 
       <Button
         size="large"
@@ -65,7 +57,7 @@ export const SearchProduct = () => {
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
         }}
-        onClick={() => doSearch(searchString)}
+        onClick={() => handleSearch(searchValue)}
       >
         Tìm kiếm
       </Button>

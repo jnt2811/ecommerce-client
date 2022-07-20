@@ -1,15 +1,17 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu } from "antd";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { paths } from "../../../constants";
-import { useAuth } from "../../../contexts/AuthContext";
+import { updateUser } from "../../../ducks/slices/authSlice";
 
 const LOGOUT = "logout";
 
 export const UserAccount = () => {
   const history = useHistory();
-  const { currentUser, setCurrentUser } = useAuth();
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.user);
 
   const loggedInItems = [
     {
@@ -40,7 +42,7 @@ export const UserAccount = () => {
   const handleMenu = ({ key }) => {
     if (key === LOGOUT) {
       localStorage.clear();
-      setCurrentUser();
+      dispatch(updateUser());
       return;
     }
     history.push(key);

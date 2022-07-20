@@ -1,15 +1,16 @@
 import { useMutation } from "@apollo/client";
 import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { keys, paths } from "../../constants";
-import { useAuth } from "../../contexts/AuthContext";
+import { updateUser } from "../../ducks/slices/authSlice";
 import { encrypt256 } from "../../helpers";
 import { USER_LOGIN } from "../../queries";
 
 export const DangNhap = () => {
   const [form] = Form.useForm();
-  const { setCurrentUser } = useAuth();
+  const dispatch = useDispatch();
   const [login, { data: login_data, loading: login_loading, error: login_error }] =
     useMutation(USER_LOGIN);
 
@@ -23,12 +24,12 @@ export const DangNhap = () => {
         const token = login_data?.userLogin?.token;
         const user_info = login_data?.userLogin?.user;
 
-        setCurrentUser(user_info);
+        dispatch(updateUser(user_info));
 
         localStorage.setItem(keys.ACCESS_TOKEN, token);
         localStorage.setItem(keys.USER_INFO, JSON.stringify(user_info));
 
-        notification.success({ message: "Welcome back!" });
+        notification.success({ message: "Welcome back!", placement: "bottomLeft" });
       } else {
         console.log("LOGIN FAILED!");
         notification.error({ message: login_data?.userLogin?.message });

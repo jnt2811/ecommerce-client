@@ -1,6 +1,6 @@
 import { Layout, Menu, Spin } from "antd";
 import { useHistory } from "react-router-dom";
-import { paths } from "../../../constants";
+import { keys, paths } from "../../../constants";
 import { GET_CATEGORIES } from "../../../queries";
 import style from "./cateSider.module.scss";
 import { useQuery } from "@apollo/client";
@@ -12,14 +12,14 @@ export const CateSider = () => {
   console.log("get list categories", list_loading, list_error, list_data);
 
   const menuItems = list_data?.getCategories?.map((category) => ({
-    key: category.SLUG,
+    key: category.ID,
     label: category.CATEGORIES_NAME,
   }));
 
   const handleClickCate = ({ key }) =>
     history.push({
       pathname: paths.search,
-      search: `category=${key}`,
+      search: `${keys.SEARCH_CATEGORY}=${key}`,
     });
 
   return (

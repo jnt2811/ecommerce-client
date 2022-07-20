@@ -8,12 +8,12 @@ import { ADD_TO_CART, GET_PRODUCTS } from "../../queries";
 import { useParams } from "react-router-dom";
 import { keys } from "../../constants";
 import { formatNumberToPrice } from "../../helpers";
-import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@apollo/client";
+import { useSelector } from "react-redux";
 
 export const ProductDetail = () => {
   const { id } = useParams();
-  const { currentUser } = useAuth();
+  const currentUser = useSelector((state) => state.auth.user);
   const [addToCart, { data: add_data, loading: add_loading, error: add_error }] =
     useMutation(ADD_TO_CART);
 

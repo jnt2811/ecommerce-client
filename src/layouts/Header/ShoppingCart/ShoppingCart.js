@@ -1,11 +1,25 @@
 import { ShoppingOutlined } from "@ant-design/icons";
+import { useLazyQuery } from "@apollo/client";
 import { Button, Col, Drawer, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { paths } from "../../../constants";
+import { GET_CART } from "../../../queries";
 
 export const ShoppingCart = () => {
   const [visible, setVisible] = useState(false);
+  const currentUser = useSelector((state) => state.auth.user);
+  const [getCart, { loading: list_loading, error: list_error, data: list_data }] = useLazyQuery(
+    GET_CART,
+    { variables: { userId: currentUser?.ID }, fetchPolicy: "no-cache" }
+  );
+
+  useEffect(() => {
+    if (visible) getCart();
+  }, [currentUser?.ID, getCart, visible]);
+
+  console.log("get cart", list_data, list_loading, list_error);
 
   const handleOpen = () => {
     setVisible(true);
