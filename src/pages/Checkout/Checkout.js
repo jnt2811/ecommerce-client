@@ -1,17 +1,5 @@
-import { MoneyCollectFilled, MoneyCollectOutlined, TagOutlined } from "@ant-design/icons";
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Col,
-  Collapse,
-  Divider,
-  Form,
-  Input,
-  Radio,
-  Row,
-  Space,
-} from "antd";
+import { TagOutlined } from "@ant-design/icons";
+import { Button, Col, Divider, Radio, Row, Space } from "antd";
 import style from "./checkout.module.scss";
 
 export const Checkout = () => {
