@@ -1,4 +1,5 @@
 import { Affix, Col, Layout, Row, Space } from "antd";
+import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { paths } from "../../constants";
 import style from "./header.module.scss";
@@ -8,6 +9,7 @@ import { UserAccount } from "./UserAccount/UserAccount";
 
 export const Header = () => {
   const { pathname } = useLocation();
+  const currentUser = useSelector((state) => state.auth.user);
 
   const isAtProductPage =
     pathname === paths.home || pathname === paths.search || pathname.includes(paths.product);
@@ -29,7 +31,7 @@ export const Header = () => {
           <Col>
             <Space align="center">
               <UserAccount />
-              {!isAtCheckoutPage && <ShoppingCart />}
+              {!isAtCheckoutPage && currentUser && <ShoppingCart />}
             </Space>
           </Col>
         </Row>

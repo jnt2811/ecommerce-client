@@ -1,10 +1,12 @@
 import { Col, Layout, Row, Spin, Tabs } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { ProductTile } from "../../components";
 import { FilterSider } from "./FilterSider/FilterSider";
 import style from "./kqTimKiem.module.scss";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { GET_PRODUCTS } from "../../queries";
+import { useQueryParams } from "../../hooks";
+import { keys } from "../../constants";
 
 const tabs = [
   {
@@ -30,14 +32,23 @@ const tabs = [
 ];
 
 export const KqTimKiem = () => {
-  const {
-    loading: list_loading,
-    error: list_error,
-    data: list_data,
-    refetch: list_refetch,
-  } = useQuery(GET_PRODUCTS, { variables: { productLock: false }, fetchPolicy: "no-cache" });
+  const query = useQueryParams();
+
+  const name = query.get(keys.SEARCH_NAME);
+  const category = query.get(keys.SEARCH_CATEGORY);
+
+  const [getProducts, { loading: list_loading, error: list_error, data: list_data }] =
+    useLazyQuery(GET_PRODUCTS);
 
   console.log("list products", list_data, list_loading, list_error);
+
+  useEffect(() => {
+    console.log("query", category, name);
+    getProducts({
+      variables: { productLock: false, categoriesId: category, searchString: name },
+      fetchPolicy: "no-cache",
+    });
+  }, [category, getProducts, name]);
 
   return (
     <Layout className={style["container"]}>

@@ -1,21 +1,41 @@
-import { StarFilled } from "@ant-design/icons";
-import { Row, Col, Rate, Space, Button, Avatar, Tooltip, List, Comment, Spin } from "antd";
+import { CloseOutlined, StarFilled } from "@ant-design/icons";
+import {
+  Row,
+  Col,
+  Rate,
+  Space,
+  Button,
+  Avatar,
+  Tooltip,
+  List,
+  Comment,
+  Spin,
+  Form,
+  Input,
+  notification,
+} from "antd";
 import ImageGallery from "react-image-gallery";
 import style from "./productDetail.module.scss";
 import moment from "moment";
 import { useQuery } from "@apollo/client";
-import { ADD_TO_CART, GET_PRODUCTS } from "../../queries";
+import {
+  ADD_COMMENT,
+  ADD_TO_CART,
+  GET_COMMENTS,
+  GET_PRODUCTS,
+  REMOVE_COMMENT,
+} from "../../queries";
 import { useParams } from "react-router-dom";
 import { keys } from "../../constants";
 import { formatNumberToPrice } from "../../helpers";
-import { useAuth } from "../../contexts/AuthContext";
 import { useMutation } from "@apollo/client";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export const ProductDetail = () => {
   const { id } = useParams();
-  const { currentUser } = useAuth();
-  const [addToCart, { data: add_data, loading: add_loading, error: add_error }] =
-    useMutation(ADD_TO_CART);
+  const currentUser = useSelector((state) => state.auth.user);
+  const [form] = Form.useForm();
 
   const {
     loading: product_loading,
@@ -25,9 +45,41 @@ export const ProductDetail = () => {
     variables: { productLock: false, id },
     fetchPolicy: "no-cache",
   });
+  const {
+    data: comment_data,
+    loading: comment_loading,
+    error: comment_error,
+  } = useQuery(GET_COMMENTS, { variables: { productId: id }, fetchPolicy: "no-cache" });
+  const [
+    addComment,
+    {
+      data: add_comment_data,
+      loading: add_comment_loading,
+      error: add_comment_error,
+      reset: add_comment_reset,
+    },
+  ] = useMutation(ADD_COMMENT, {
+    refetchQueries: [GET_COMMENTS, { variables: { productId: id }, fetchPolicy: "no-cache" }],
+  });
+  const [addToCart, { data: add_data, loading: add_loading, error: add_error }] =
+    useMutation(ADD_TO_CART);
+  const [
+    removeComment,
+    {
+      data: remove_comment_data,
+      loading: remove_comment_loading,
+      error: remove_comment_error,
+      reset: remove_comment_reset,
+    },
+  ] = useMutation(REMOVE_COMMENT, {
+    refetchQueries: [GET_COMMENTS, { variables: { productId: id }, fetchPolicy: "no-cache" }],
+  });
 
   console.log(`get product ID ${id}:`, product_loading, product_error, product_data);
   console.log(`add to cart`, add_data, add_loading, add_error);
+  console.log(`get comments`, comment_data, comment_loading, comment_error);
+  console.log(`add comment`, add_comment_data, add_comment_loading, add_comment_error);
+  console.log(`remove comment`, remove_comment_data, remove_comment_loading, remove_comment_error);
 
   const product = product_data?.getProducts?.length > 0 ? product_data?.getProducts[0] : {};
 
@@ -38,6 +90,46 @@ export const ProductDetail = () => {
           thumbnail: keys.SERVER_URI + url,
         }))
       : [];
+
+  useEffect(() => {
+    if (add_comment_data) {
+      if (add_comment_data?.addNewComment?.status === "KO") {
+        add_comment_reset();
+        notification.error({
+          placement: "bottomLeft",
+          message: "Bình luận thất bại!",
+        });
+      } else if (add_comment_data?.addNewComment?.status === "OK") {
+        add_comment_reset();
+        form.resetFields();
+      }
+    }
+  }, [add_comment_data, add_comment_reset, form]);
+
+  useEffect(() => {
+    if (remove_comment_data) {
+      if (remove_comment_data?.removeComment?.status === "KO") {
+        remove_comment_reset();
+        notification.error({
+          placement: "bottomLeft",
+          message: "Gỡ bình luận thất bại!",
+        });
+      } else if (remove_comment_data?.removeComment?.status === "OK") {
+        remove_comment_reset();
+      }
+    }
+  }, [remove_comment_data, form, remove_comment_reset]);
+
+  const onFinish = (values) => {
+    values.USER_ID = currentUser?.ID;
+    values.PRODUCT_ID = id;
+    console.log(values);
+    addComment({ variables: { comment: values } });
+  };
+
+  const handleDeleteComment = (comment) => {
+    removeComment({ variables: { comment: { ID: comment.ID, STATE: false } } });
+  };
 
   return (
     <Spin spinning={product_loading}>
@@ -144,13 +236,43 @@ export const ProductDetail = () => {
       </div>
 
       <div className={style["block"]}>
-        <h2>Đánh Giá - Nhận Xét Từ Khách Hàng</h2>
+        <h2>Bình luận</h2>
+
+        <Form form={form} onFinish={onFinish}>
+          <Form.Item name="CONTENTS">
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item>
+            <Button htmlType="submit" loading={add_comment_loading} type="primary">
+              Đăng bình luận
+            </Button>
+          </Form.Item>
+        </Form>
 
         <List
-          className="comment-list"
-          header={`${data.length} replies`}
+          header={`${comment_data?.getCommentOfProduct?.length} bình luận`}
           itemLayout="horizontal"
-          dataSource={data}
+          dataSource={comment_data?.getCommentOfProduct?.map((comment) => ({
+            ...comment,
+            content: <p>{comment.CONTENTS}</p>,
+            author: comment.LAST_NAME + " " + comment.FIRST_NAME,
+            avatar: "https://joeschmoe.io/api/v1/random",
+            actions:
+              comment.USER_ID === currentUser?.ID
+                ? [
+                    <Button
+                      type="text"
+                      onClick={() => handleDeleteComment(comment)}
+                      loading={remove_comment_loading}
+                      icon={<CloseOutlined />}
+                      size="small"
+                      danger
+                    >
+                      Gỡ bình luận
+                    </Button>,
+                  ]
+                : [],
+          }))}
           renderItem={(item) => (
             <li>
               <Comment
@@ -167,40 +289,3 @@ export const ProductDetail = () => {
     </Spin>
   );
 };
-
-const data = [
-  {
-    actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-    author: "Han Solo",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high quality design
-        resources (Sketch and Axure), to help people create their product prototypes beautifully and
-        efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip title={moment().subtract(1, "days").format("YYYY-MM-DD HH:mm:ss")}>
-        <span>{moment().subtract(1, "days").fromNow()}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-    author: "Han Solo",
-    avatar: "https://joeschmoe.io/api/v1/random",
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high quality design
-        resources (Sketch and Axure), to help people create their product prototypes beautifully and
-        efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip title={moment().subtract(2, "days").format("YYYY-MM-DD HH:mm:ss")}>
-        <span>{moment().subtract(2, "days").fromNow()}</span>
-      </Tooltip>
-    ),
-  },
-];
