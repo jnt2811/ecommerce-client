@@ -6,6 +6,9 @@ export const GET_CART = gql`
       ID
       USER_ID
       PRODUCT_ID
+      PRODUCT_NAME
+      PRICE
+      DELIVERY_PRICE
       COUNT_PRODUCT
     }
   }
@@ -22,8 +25,8 @@ export const ADD_TO_CART = gql`
 `;
 
 export const REMOVE_FROM_CART = gql`
-  mutation RemoveItemFromCart($productId: [String]!, $userId: String!) {
-    removeItemFromCart(productID: $productId, userID: $userId) {
+  mutation RemoveItemFromCart($id: [String]!) {
+    removeItemFromCart(ID: $id) {
       status
       message
       error
