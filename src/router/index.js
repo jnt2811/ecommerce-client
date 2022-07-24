@@ -15,7 +15,7 @@ import {
   paypal,
   Checkout,
 } from "../pages";
-import { AuthRoute, PrivateRoute } from "./ConfigRoutes";
+import { AuthRoute, PrivateRoute, PublicRoute } from "./ConfigRoutes";
 
 export const AppRouter = () => {
   return (
@@ -31,14 +31,14 @@ export const AppRouter = () => {
 
               <Container>
                 <Switch>
-                  <Route exact path={paths.home} component={TrangChu} />
-                  <Route exact path={paths.search} component={KqTimKiem} />
-                  <Route path={paths.product + "/:id"} component={ProductDetail} />
+                  <PublicRoute exact path={paths.home} component={TrangChu} />
+                  <PublicRoute exact path={paths.search} component={KqTimKiem} />
+                  <PublicRoute path={paths.product + "/:id"} component={ProductDetail} />
                   <PrivateRoute exact path={paths.order} component={QuanLyDonHang} />
                   <PrivateRoute path={paths.order + "/:id"} component={ChiTietDonHang} />
                   <PrivateRoute path={paths.checkout} component={Checkout} />
-                  <Route exact path={paths.payment} component={paypal} />
-                  <Route component={NoMatch} />
+                  <PublicRoute exact path={paths.payment} component={paypal} />
+                  <PublicRoute component={NoMatch} />
                 </Switch>
               </Container>
             </>
