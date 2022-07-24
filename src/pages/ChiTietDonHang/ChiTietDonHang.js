@@ -1,14 +1,40 @@
-import { Col, Row } from "antd";
+import {Button, Col, Divider, Row, Space} from "antd";
 import React from "react";
 import OrderTile from "../QuanLyDonHang/OrderTile/OrderTile";
+import {useSelector} from "react-redux";
+import {useLazyQuery} from "@apollo/client";
+import {GET_ORDERS} from "../../queries/order.gql";
+import {useState, useEffect} from "react";
+import {useParams} from "react-router-dom";
+import {useSetState} from "ahooks";
+import {paths} from "../../constants";
 
 export const ChiTietDonHang = () => {
+  const currentUser = useSelector((state) => state.auth.user);
+  const [order, setOrder] = useState()
+  const {id} = useParams()
+
+  const [getOrders, { loading: list_loading, error: list_error, data: list_data }] = useLazyQuery(
+      GET_ORDERS,
+      {
+        variables: { id: id },
+        fetchPolicy: "no-cache",
+        onCompleted: data => {
+          setOrder(data.getOrders[0])
+        }
+      });
+
+  useEffect(() => {
+    getOrders()
+  }, [currentUser?.ID, getOrders]);
+
+  console.log("get order", list_data, list_loading, list_error);
   return (
     <div>
       <Row justify="space-between" align="middle">
         <h1>Chi tiết đơn hàng</h1>
 
-        <div>Ngày đặt hàng: 21:20 20/06/2022</div>
+        <div>Ngày đặt hàng: {order?.CREATE_AT}</div>
       </Row>
 
       <Row gutter={20}>
@@ -17,12 +43,11 @@ export const ChiTietDonHang = () => {
           <div
             style={{ backgroundColor: "white", padding: 20, height: "100%" }}
           >
-            <h3>Nguyen Van A</h3>
+            <h3>{order?.NAME}</h3>
             <div>
-              Địa chỉ: Lô 22, số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận
-              Thanh Xuân, Hà Nội, Việt Nam
+              Địa chỉ: {order?.ADDRESS}
             </div>
-            <div>Điện thoại: 0902223120</div>
+            <div>Điện thoại: {order?.PHONE_NUMBER}</div>
           </div>
         </Col>
 
@@ -31,10 +56,8 @@ export const ChiTietDonHang = () => {
           <div
             style={{ backgroundColor: "white", padding: 20, height: "100%" }}
           >
-            <h3>Giao hàng tiết kiệm</h3>
-            <div>Giao vào Thứ năm, 23/06</div>
-            <div>Được giao bởi TFootball Thế Giới Bóng Đá</div>
-            <div>Miễn phí vận chuyển</div>
+            <h3>{order?.DELIVERY_STATE}</h3>
+            <div>{order?.PRODUCTS.reduce((p,c) => p.PRICE+c.PRICE)}</div>
           </div>
         </Col>
 
@@ -43,7 +66,7 @@ export const ChiTietDonHang = () => {
           <div
             style={{ backgroundColor: "white", padding: 20, height: "100%" }}
           >
-            <div>Thanh toán bằng thẻ quốc tế Visa, Master, JCB</div>
+            <div>{order?.DELIVERY_METHOD}</div>
           </div>
         </Col>
       </Row>
@@ -51,7 +74,40 @@ export const ChiTietDonHang = () => {
       <br />
       <br />
 
-      <OrderTile showFooter={false} />
+        {
+            order?.PRODUCTS.map(item => (
+                <div
+                    style={{
+                        border: "1px solid #00000010",
+                        backgroundColor: "#fff",
+                        padding: 20,
+                    }}
+                    key={item.ID}
+                >
+                    <Row gutter={20}>
+                        <Col flex="150px">
+                            <img
+                                alt="example"
+                                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                                style={{
+                                    width: "100%",
+                                    aspectRatio: "1/1",
+                                    objectFit: "cover",
+                                    objectPosition: "center",
+                                }}
+                            />
+                        </Col>
+
+                        <Col flex="auto">
+                            <h3>{item.PRODUCT_NAME}</h3>
+                            <h3>{item.QUANTITY}</h3>
+                        </Col>
+
+                        <Col>{item.PRICE}</Col>
+                    </Row>
+                </div>
+            ))
+        }
     </div>
   );
 };

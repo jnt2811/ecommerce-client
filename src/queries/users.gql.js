@@ -35,3 +35,31 @@ export const USER_SIGNUP = gql`
     }
   }
 `;
+
+export const GET_USER_AND_CART = gql`
+  query GetUsers($userId: String) {
+    getCart(userID: $userId) {
+      ID
+      USER_ID
+      PRODUCT_ID
+      PRODUCT_NAME
+      PRICE
+      DELIVERY_PRICE
+      COUNT_PRODUCT
+    }
+    getUsers(ID: $userId) {
+      ID
+      EMAIL
+      CREATE_AT
+      UPDATE_AT
+      STATE
+      FIRST_NAME
+      LAST_NAME
+      DATE_OF_BIRTH
+      GENDER
+      NATIONALITY
+      ADDRESS
+      PHONE_NUMBER
+    }
+  }
+`;
