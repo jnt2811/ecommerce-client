@@ -8,6 +8,7 @@ export const ProductTile = ({ product = {} }) => {
   const history = useHistory();
 
   const handleClick = () => {
+    console.log(product);
     history.push(paths.product + "/" + product.ID);
   };
 

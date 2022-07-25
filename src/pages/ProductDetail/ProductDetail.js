@@ -25,12 +25,14 @@ import {
   GET_PRODUCTS,
   REMOVE_COMMENT,
 } from "../../queries";
-import { useParams } from "react-router-dom";
+import { useParams, withRouter } from "react-router-dom";
 import { keys } from "../../constants";
 import { formatNumberToPrice } from "../../helpers";
 import { useMutation } from "@apollo/client";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ProductTile } from "../../components";
 
 export const ProductDetail = () => {
   const { id } = useParams();
@@ -74,6 +76,7 @@ export const ProductDetail = () => {
   ] = useMutation(REMOVE_COMMENT, {
     refetchQueries: [GET_COMMENTS, { variables: { productId: id }, fetchPolicy: "no-cache" }],
   });
+  const [suggestProducts, setSuggestProducts] = useState([]);
 
   console.log(`get product ID ${id}:`, product_loading, product_error, product_data);
   console.log(`add to cart`, add_data, add_loading, add_error);
@@ -120,6 +123,10 @@ export const ProductDetail = () => {
     }
   }, [remove_comment_data, form, remove_comment_reset]);
 
+  useEffect(() => {
+    handleGetProductSuggest();
+  }, []);
+
   const onFinish = (values) => {
     values.USER_ID = currentUser?.ID;
     values.PRODUCT_ID = id;
@@ -131,8 +138,38 @@ export const ProductDetail = () => {
     removeComment({ variables: { comment: { ID: comment.ID, STATE: false } } });
   };
 
+  const handleGetProductSuggest = () => {
+    navigator.geolocation?.getCurrentPosition(async (position) => {
+      const pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+
+      try {
+        const { data } = await axios.post(
+          "https://efae-123-16-146-8.ap.ngrok.io/api/tensorflow/predictProduct",
+          { currentLocation: JSON.stringify(pos) },
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              mode: "no-cors",
+            },
+          }
+        );
+
+        console.log(data);
+        setSuggestProducts(data.result);
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  };
+
   return (
     <Spin spinning={product_loading}>
+      <ScrollToTop />
       <div className={style["block"]}>
         <Row gutter={20}>
           <Col span={9}>
@@ -224,6 +261,18 @@ export const ProductDetail = () => {
       </div>
 
       <div className={style["block"]}>
+        <h2>Sản phẩm bán chạy</h2>
+
+        <Row gutter={20}>
+          {suggestProducts.slice(0, 6).map((product) => (
+            <Col span={4} key={product.ID}>
+              <ProductTile product={product} />
+            </Col>
+          ))}
+        </Row>
+      </div>
+
+      <div className={style["block"]}>
         <h2>Thông tin chi tiết</h2>
 
         <div dangerouslySetInnerHTML={{ __html: product?.DESCRIPTION }} className="rich-text" />
@@ -289,3 +338,16 @@ export const ProductDetail = () => {
     </Spin>
   );
 };
+
+export const ScrollToTop = withRouter(({ history }) => {
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      window.scrollTo(0, 0);
+    });
+    return () => {
+      unlisten();
+    };
+  });
+
+  return null;
+});

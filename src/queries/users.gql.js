@@ -46,6 +46,7 @@ export const GET_USER_AND_CART = gql`
       PRICE
       DELIVERY_PRICE
       COUNT_PRODUCT
+      GALLERY
     }
     getUsers(ID: $userId) {
       ID
