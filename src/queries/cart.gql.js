@@ -10,6 +10,7 @@ export const GET_CART = gql`
       PRICE
       DELIVERY_PRICE
       COUNT_PRODUCT
+      PRODUCT_OPTIONS
     }
   }
 `;

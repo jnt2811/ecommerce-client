@@ -74,14 +74,18 @@ export const ShoppingCart = () => {
         }
       >
         {list_data?.getCart.map((c) => (
-          <Row gutter={20} style={{ marginBottom: 20 }}>
+          <Row gutter={20} style={{ marginBottom: 20 }} align="middle">
             <Col>{renderProductImage(c)}</Col>
 
             <Col flex="auto">
               <h4>{c.PRODUCT_NAME}</h4>
 
               <Row justify="space-between">
-                <InputCount initValue={c.COUNT_PRODUCT} />
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <InputCount initValue={c.COUNT_PRODUCT} />
+
+                  <div style={{ marginTop: 10, fontSize: 12 }}>Loại: {c.PRODUCT_OPTIONS}</div>
+                </div>
 
                 <Button
                   type="primary"

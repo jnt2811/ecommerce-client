@@ -7,60 +7,75 @@ import { useLazyQuery } from "@apollo/client";
 import { GET_PRODUCTS } from "../../queries";
 import { useQueryParams } from "../../hooks";
 import { keys } from "../../constants";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProduct } from "../../ducks/slices/productSlice";
 
-const tabs = [
-  {
-    key: "pho-bien",
-    tab: "Phổ biến",
-  },
-  {
-    key: "ban-chay",
-    tab: "Bán chạy",
-  },
-  {
-    key: "hang-moi",
-    tab: "Hàng mới",
-  },
-  {
-    key: "gia-thap",
-    tab: "Giá thấp",
-  },
-  {
-    key: "gia-cao",
-    tab: "Giá cao",
-  },
-];
+const tabs = {
+  default: { value: { field: null, type: null }, title: "Tất cả" },
+  price_l_2_h: { value: { field: "PRICE", type: "asc" }, title: "Giá thấp - cao" },
+  price_h_2_l: { value: { field: "PRICE", type: "desc" }, title: "Giá cao - thấp" },
+  a_z: { value: { field: "PRODUCT_NAME", type: "asc" }, title: "A - Z" },
+  z_a: { value: { field: "PRODUCT_NAME", type: "desc" }, title: "Z - A" },
+};
 
 export const KqTimKiem = () => {
   const query = useQueryParams();
 
   const name = query.get(keys.SEARCH_NAME);
   const category = query.get(keys.SEARCH_CATEGORY);
+  const product = useSelector((state) => state.product);
+  const dispatch = useDispatch();
 
-  const [getProducts, { loading: list_loading, error: list_error, data: list_data }] =
-    useLazyQuery(GET_PRODUCTS);
+  const [getProducts, { loading: list_loading, error: list_error, data: list_data }] = useLazyQuery(
+    GET_PRODUCTS,
+    {
+      onCompleted: (data) => {
+        dispatch(updateProduct({ loading: false, list: data?.getProducts }));
+      },
+    }
+  );
 
   console.log("list products", list_data, list_loading, list_error);
 
   useEffect(() => {
     console.log("query", category, name);
     getProducts({
-      variables: { productLock: false, categoriesId: category, searchString: name },
+      variables: {
+        productLock: false,
+        categoriesId: category,
+        searchString: name,
+        orderBy: tabs.default.value,
+      },
       fetchPolicy: "no-cache",
     });
-  }, [category, getProducts, name]);
+    dispatch(updateProduct({ loading: true, list: [] }));
+  }, [category, dispatch, getProducts, name]);
+
+  const handleChangeTab = (value) => {
+    console.log();
+    getProducts({
+      variables: {
+        productLock: false,
+        categoriesId: category,
+        searchString: name,
+        orderBy: JSON.parse(value),
+      },
+      fetchPolicy: "no-cache",
+    });
+    dispatch(updateProduct({ loading: true, list: [] }));
+  };
 
   return (
     <Layout className={style["container"]}>
       <FilterSider />
 
       <Layout.Content>
-        <Tabs className={style["main"]}>
-          {tabs.map((item) => (
-            <Tabs.TabPane tab={item.tab} key={item.key}>
+        <Tabs className={style["main"]} onChange={handleChangeTab}>
+          {Object.keys(tabs).map((key) => (
+            <Tabs.TabPane tab={tabs[key].title} key={JSON.stringify(tabs[key].value)}>
               <Spin spinning={list_loading}>
                 <Row gutter={[20, 20]} className={style["main"]}>
-                  {list_data?.getProducts?.map((product) => (
+                  {product.list.map((product) => (
                     <Col span={6} key={product.ID}>
                       <ProductTile product={product} />
                     </Col>

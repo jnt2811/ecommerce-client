@@ -51,7 +51,9 @@ export const ChiTietDonHang = () => {
           <h3>HÌNH THỨC GIAO HÀNG</h3>
           <div style={{ backgroundColor: "white", padding: 20, height: "100%" }}>
             <h3>{order?.DELIVERY_STATE}</h3>
-            <div>{formatNumberToPrice(order?.PRODUCTS.reduce((p, c) => p.PRICE + c.PRICE))}đ</div>
+            <div>
+              {formatNumberToPrice(order?.PRODUCTS.reduce((sum, item) => (sum += item.PRICE), 0))}đ
+            </div>
           </div>
         </Col>
 
@@ -96,6 +98,7 @@ export const ChiTietDonHang = () => {
             <Col flex="auto">
               <h3>{item.PRODUCT_NAME}</h3>
               <h3>{item.QUANTITY}</h3>
+              <div>Loại: {item.PRODUCT_OPTIONS}</div>
             </Col>
 
             <Col>{formatNumberToPrice(item.PRICE)}đ</Col>
