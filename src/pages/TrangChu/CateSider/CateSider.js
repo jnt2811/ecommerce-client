@@ -4,10 +4,13 @@ import { keys, paths } from "../../../constants";
 import { GET_CATEGORIES } from "../../../queries";
 import style from "./cateSider.module.scss";
 import { useQuery } from "@apollo/client";
+import { useDispatch } from "react-redux";
+import { updateProduct } from "../../../ducks/slices/productSlice";
 
 export const CateSider = () => {
   const history = useHistory();
   const { data: list_data, loading: list_loading, error: list_error } = useQuery(GET_CATEGORIES);
+  const dispatch = useDispatch();
 
   console.log("get list categories", list_loading, list_error, list_data);
 
@@ -16,11 +19,13 @@ export const CateSider = () => {
     label: category.CATEGORIES_NAME,
   }));
 
-  const handleClickCate = ({ key }) =>
+  const handleClickCate = ({ key }) => {
+    dispatch(updateProduct({ list: [] }));
     history.push({
       pathname: paths.search,
       search: `${keys.SEARCH_CATEGORY}=${key}`,
     });
+  };
 
   return (
     <Layout.Sider className={style["container"]} width={250}>

@@ -83,6 +83,7 @@ export const Checkout = () => {
         return {
           PRODUCT_ID: c.PRODUCT_ID,
           QUANTITY: c.COUNT_PRODUCT,
+          PRODUCT_OPTIONS: c.PRODUCT_OPTIONS,
         };
       }),
     };
@@ -135,8 +136,11 @@ export const Checkout = () => {
                       {renderProductImage(item)}
 
                       <div>
-                        <div>{item.PRODUCT_NAME}</div>
+                        <h4>{item.PRODUCT_NAME}</h4>
                         <div>{item.COUNT_PRODUCT}</div>
+                        <div style={{ fontSize: 12, marginTop: 5 }}>
+                          Loại: {item.PRODUCT_OPTIONS}
+                        </div>
                       </div>
                     </Space>
                   </Col>

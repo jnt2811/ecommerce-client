@@ -32,6 +32,22 @@ export const USER_SIGNUP = gql`
       status
       message
       error
+      token
+      refreshToken
+      user {
+        ID
+        EMAIL
+        CREATE_AT
+        UPDATE_AT
+        STATE
+        FIRST_NAME
+        LAST_NAME
+        DATE_OF_BIRTH
+        GENDER
+        NATIONALITY
+        ADDRESS
+        PHONE_NUMBER
+      }
     }
   }
 `;
@@ -47,6 +63,7 @@ export const GET_USER_AND_CART = gql`
       DELIVERY_PRICE
       COUNT_PRODUCT
       GALLERY
+      PRODUCT_OPTIONS
     }
     getUsers(ID: $userId) {
       ID

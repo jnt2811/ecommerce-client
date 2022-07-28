@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
 import { Button, Col, Form, Input, notification, Row, Typography } from "antd";
-import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { keys, paths } from "../../constants";
@@ -10,32 +9,27 @@ import { USER_SIGNUP } from "../../queries";
 
 export const DangKy = () => {
   const [form] = Form.useForm();
-  const [addUser, { data: add_data, loading: add_loading, error: add_error }] =
-    useMutation(USER_SIGNUP);
-  const [tempUserData, setTempUserData] = useState();
   const dispatch = useDispatch();
 
-  console.log("user signup", add_data, add_loading, add_error);
+  const handleSignupComplete = (data) => {
+    if (data?.addNewUser?.status === "OK") {
+      form.resetFields();
 
-  useEffect(() => {
-    if (add_data) {
-      if (add_data?.addNewUser?.status === "OK") {
-        form.resetFields();
-        dispatch(updateUser(tempUserData));
+      const token = data?.addNewUser?.token;
+      const user_info = data?.addNewUser?.user;
 
-        const token = add_data?.addNewUser?.token;
+      dispatch(updateUser(user_info));
 
-        localStorage.setItem(keys.ACCESS_TOKEN, token);
-        localStorage.setItem(keys.USER_INFO, JSON.stringify(tempUserData));
+      localStorage.setItem(keys.ACCESS_TOKEN, token);
+      localStorage.setItem(keys.USER_INFO, JSON.stringify(user_info));
 
-        notification.success({ message: "Signup successfully!", placement: "bottomLeft" });
-      } else if (add_data?.addNewUser?.status === "KO") {
-        console.log("SIGNUP FAILED!");
-        notification.error({ message: add_data?.addNewUser?.message });
-      }
+      notification.success({ message: "Signup success!", placement: "bottomLeft" });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [add_data]);
+  };
+
+  const [addUser, { loading: add_loading }] = useMutation(USER_SIGNUP, {
+    onCompleted: handleSignupComplete,
+  });
 
   const onFinish = (values) => {
     delete values.CONFIRM;
@@ -43,8 +37,6 @@ export const DangKy = () => {
     console.log(values);
 
     values.PASSWORD = encrypt256(values.PASSWORD);
-
-    setTempUserData(values);
 
     addUser({ variables: { users: [values] } });
   };

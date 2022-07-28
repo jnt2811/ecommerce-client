@@ -19,6 +19,7 @@ export const GET_PRODUCTS = gql`
     ) {
       ID
       PRODUCT_NAME
+      PRODUCT_OPTIONS
       SELLER {
         ID
         EMAIL
