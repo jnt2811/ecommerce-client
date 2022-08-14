@@ -1,5 +1,5 @@
 import { Button, Col, Divider, Row, Space } from "antd";
-import { paths } from "../../../constants";
+import { keys, paths } from "../../../constants";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -24,6 +24,17 @@ const OrderTile = ({ showFooter = true }) => {
 
   console.log("get order", list_data, list_loading, list_error);
 
+  const getImage = (_gallery) => {
+    try {
+      let image = "";
+      const gallery = JSON.parse(_gallery);
+      if (gallery?.length > 0) image = gallery[0];
+      return keys.SERVER_URI + image;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       {list_data?.getOrders.map((item) => (
@@ -39,7 +50,7 @@ const OrderTile = ({ showFooter = true }) => {
             <Col flex="150px">
               <img
                 alt="example"
-                // src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                src={getImage(item?.GALLERY)}
                 style={{
                   width: "100%",
                   aspectRatio: "1/1",
